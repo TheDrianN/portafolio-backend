@@ -25,7 +25,7 @@ export class TaskService {
        message:'Error al procesar petición'
       },
       HttpStatus.BAD_REQUEST
-    ) 
+      ) 
     }
   }
 

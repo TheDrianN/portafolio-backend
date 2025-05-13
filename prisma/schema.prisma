@@ -42,6 +42,7 @@ model User {
   tasks     Task[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 model Task {
@@ -57,6 +58,7 @@ model Task {
   user        User        @relation(fields: [userId], references: [id])
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
+  deleted_at DateTime?
 }
 
 //Sistema de descuento
@@ -69,6 +71,7 @@ model Product{
   items SaleItem[]
   created_at DateTime @default(now())
   updated_at  DateTime    @updatedAt
+  deleted_at DateTime?
 }
 
 model DiscountCode{
@@ -83,6 +86,7 @@ model DiscountCode{
   sales          Sale[]
   created_at DateTime @default(now())
   updated_at  DateTime    @updatedAt
+  deleted_at DateTime?
 }
 
 model Sale{
@@ -95,6 +99,7 @@ model Sale{
   discountCode      DiscountCode? @relation(fields: [discount_code_id], references: [id])
   created_at DateTime @default(now())
   updated_at  DateTime    @updatedAt
+  deleted_at DateTime?
 }
 
 model SaleItem{

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,22 +8,158 @@ export class ProductService {
   constructor(private readonly prisma:PrismaService) {}
   
   create(createProductDto: CreateProductDto) {
-    return 'This action adds a new product';
+    try {
+
+      const product = this.prisma.product.create({
+        data:createProductDto
+      });
+
+      return {
+        status: 'success',
+        message: 'Producto creado exitosamente',
+        data: product,
+        errors: null,
+        code: HttpStatus.CREATED,
+      }
+      
+    } catch (error) {
+      throw new HttpException (
+        {
+          status:'error',
+          message:'Error Al crear producto',
+          data: null,
+          error:{},
+          code: HttpStatus.BAD_REQUEST
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  findAll() {
-    return `This action returns all product`;
+  async findAll() {
+    try {
+      const listProducts = await this.prisma.product.findMany();
+
+      return {
+        status: 'success',
+        message: 'Productos listados correctamente',
+        data: listProducts,
+        errors: null,
+        code: HttpStatus.OK,
+      }
+      
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'Error al listar los códigos de descuento',
+          data: null,
+          errors: {
+            code: 'LIST_ERROR',
+            details: error.message,
+          },
+          code: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      )
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findOne(id: number) {
+    try {
+
+      const product = await this.prisma.product.findUniqueOrThrow({
+        where:{id},
+      }) 
+
+      return {
+        status: 'success',
+        message: 'Producto encontrado correctamente',
+        data: product,
+        errors: null,
+        code: HttpStatus.OK,
+      };
+
+    } catch (error) {
+      
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'Producto no encontrado',
+          data: null,
+          errors: {
+            code: 'NOT_FOUND',
+            details: error.message,
+          },
+          code: HttpStatus.NOT_FOUND,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+
+    }
   }
 
   update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
+    try {
+      const updated = this.prisma.product.update({
+        where:{id},
+        data: updateProductDto
+      });
+
+      return {
+        status: 'success',
+        message: 'Producto actualizado correctamente',
+        data: updated,
+        errors: null,
+        code: HttpStatus.OK,
+      };
+      
+    } catch (error) {
+
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'Error al actualizar el código de descuento',
+          data: null,
+          errors: {
+            code: 'UPDATE_ERROR',
+            details: error.message,
+          },
+          code: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async remove(id: number) {
+    try {
+      const deleted = await this.prisma.product.update({
+        where:{id},
+        data:{
+          deleted_at: new Date()
+        }
+      });
+
+      return {
+        status: 'success',
+        message: 'Producto marcado como eliminado',
+        data: deleted,
+        errors: null,
+        code: HttpStatus.OK,
+      };
+      
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'Error al eliminar el código de descuento',
+          data: null,
+          errors: { code: 'DELETE_ERROR', details: error.message },
+          code: HttpStatus.BAD_REQUEST,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }
