@@ -1,0 +1,113 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  IN_PROGRESS
+  COMPLETED
+  BLOCKED
+  CANCELLED
+  REVIEW
+}
+
+enum DiscountType {
+  P //Porcentaje
+  F //Fijo
+}
+enum DiscountState {
+  A // Activo
+  I // Inactivo
+  E // Expirado
+}
+
+
+enum TaskPriority {
+  LOW
+  NORMAL
+  HIGH
+  VITAL
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  name      String
+  tasks     Task[]
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Task {
+  id          Int         @id @default(autoincrement())
+  title       String
+  objective   String?
+  description String?
+  notes       String?
+  deadline    DateTime?
+  status      TaskStatus  @default(NOT_STARTED)
+  priority    TaskPriority @default(NORMAL)
+  userId      Int
+  user        User        @relation(fields: [userId], references: [id])
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+//Sistema de descuento
+model Product{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(100)
+  price Decimal @db.Decimal(10,2)
+  stock Int @default(0)
+  img String @db.VarChar(255)
+  items SaleItem[]
+  created_at DateTime @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+model DiscountCode{
+  id Int @id @default(autoincrement())
+  code String @db.VarChar(50)
+  description String @db.Text()
+  discount_type DiscountType
+  discount_value Decimal @db.Decimal(10,2)
+  valid_from DateTime
+  valid_until DateTime
+  status DiscountState
+  sales          Sale[]
+  created_at DateTime @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+model Sale{
+  id Int @id @default(autoincrement())
+  total Decimal @db.Decimal(10,2)
+  discount_code_id Int
+  discount_applied Decimal @db.Decimal(10,2) @default(0.00)
+  final_total  Decimal @db.Decimal(10,2)
+  items             SaleItem[]
+  discountCode      DiscountCode? @relation(fields: [discount_code_id], references: [id])
+  created_at DateTime @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+model SaleItem{
+  id Int @id @default(autoincrement())
+  sale_id Int
+  product_id Int
+  quantity Int
+  price Decimal @db.Decimal(10,2)
+  subtotal Decimal @db.Decimal(10,2)
+  sale Sale @relation(fields: [sale_id],references: [id])
+  product Product @relation(fields: [product_id],references: [id])
+  created_at DateTime @default(now())
+  updated_at  DateTime    @updatedAt
+}
+
+//Reproductor de musica
