@@ -70,7 +70,7 @@ export class SaleService {
 
       return {
         status: 'success',
-        message: 'Productos listados correctamente',
+        message: 'Ventas listados correctamente',
         data: listSale,
         errors: null,
         code: HttpStatus.OK,

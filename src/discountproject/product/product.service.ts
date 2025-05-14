@@ -52,7 +52,7 @@ export class ProductService {
       throw new HttpException(
         {
           status: 'error',
-          message: 'Error al listar los códigos de descuento',
+          message: 'Error al listar los Productos',
           data: null,
           errors: {
             code: 'LIST_ERROR',
@@ -119,7 +119,7 @@ export class ProductService {
       throw new HttpException(
         {
           status: 'error',
-          message: 'Error al actualizar el código de descuento',
+          message: 'Error al actualizar el Producto',
           data: null,
           errors: {
             code: 'UPDATE_ERROR',
@@ -153,7 +153,7 @@ export class ProductService {
       throw new HttpException(
         {
           status: 'error',
-          message: 'Error al eliminar el código de descuento',
+          message: 'Error al eliminar el Producto',
           data: null,
           errors: { code: 'DELETE_ERROR', details: error.message },
           code: HttpStatus.BAD_REQUEST,
