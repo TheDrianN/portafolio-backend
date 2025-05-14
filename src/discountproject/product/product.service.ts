@@ -7,10 +7,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class ProductService {
   constructor(private readonly prisma:PrismaService) {}
   
-  create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto) {
     try {
 
-      const product = this.prisma.product.create({
+      const product = await this.prisma.product.create({
         data:createProductDto
       });
 
@@ -99,9 +99,9 @@ export class ProductService {
     }
   }
 
-  update(id: number, updateProductDto: UpdateProductDto) {
+  async update(id: number, updateProductDto: UpdateProductDto) {
     try {
-      const updated = this.prisma.product.update({
+      const updated = await this.prisma.product.update({
         where:{id},
         data: updateProductDto
       });

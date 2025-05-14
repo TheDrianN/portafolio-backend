@@ -7,10 +7,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class DiscountcodeService {
   constructor(private readonly prisma: PrismaService) {}
   
-  create(createDiscountcodeDto: CreateDiscountcodeDto) {
+   async create(createDiscountcodeDto: CreateDiscountcodeDto) {
     try {
 
-      const newDiscountCode = this.prisma.discountCode.create({
+      const newDiscountCode = await this.prisma.discountCode.create({
         data: createDiscountcodeDto
       });
 
@@ -106,9 +106,9 @@ export class DiscountcodeService {
     }
   }
 
-  update(id: number, updateDiscountcodeDto: UpdateDiscountcodeDto) {
+  async update(id: number, updateDiscountcodeDto: UpdateDiscountcodeDto) {
     try {
-      const updated  = this.prisma.discountCode.update({
+      const updated  = await this.prisma.discountCode.update({
         where:{id},
         data:updateDiscountcodeDto,
       });
