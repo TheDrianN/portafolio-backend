@@ -14,4 +14,8 @@ export class CreateProductDto {
     @IsString()
     img: string;
 
+    @IsNumber()
+    @IsPositive()
+    category_id: number;
+
 }

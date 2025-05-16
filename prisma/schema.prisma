@@ -69,6 +69,18 @@ model Product{
   stock Int @default(0)
   img String @db.VarChar(255)
   items SaleItem[]
+  category_id Int
+  category Category @relation(fields: [category_id],references: [id])
+  created_at DateTime @default(now())
+  updated_at  DateTime    @updatedAt
+  deleted_at DateTime?
+}
+
+model Category {
+  id  Int @id @default(autoincrement())
+  name String @db.VarChar(150)
+  description String? @db.Text
+  products Product[]
   created_at DateTime @default(now())
   updated_at  DateTime    @updatedAt
   deleted_at DateTime?
