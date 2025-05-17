@@ -13,21 +13,25 @@ import * as fs from 'fs';
 })
 
 export class FirebaseServiceModule {
-  constructor() {
-    const serviceAccountPath = join(
-      envs.firebase // La ruta dinámica desde el .env
-    );
+  private readonly db: FirebaseFirestore.Firestore;
 
-    if (fs.existsSync(serviceAccountPath)) {
+  constructor() {
+    // Inicializar Firebase si no se ha hecho aún
+    if (!admin.apps.length) {
+      const credentials = JSON.parse(envs.firebase!); // Asegúrate de que esto ya está cargado
       admin.initializeApp({
-        credential: admin.credential.cert(serviceAccountPath),
-        storageBucket: 'cip-img.appspot.com', // Reemplaza por el nombre de tu bucket de Firebase
+        credential: admin.credential.cert(credentials),
+        storageBucket: 'cip-img.appspot.com',
       });
-      console.log('Firebase initialized successfully.');
-    } else {
-      console.warn(
-        `Firebase credentials not found at ${serviceAccountPath}. Skipping Firebase initialization.`
-      );
+      console.log('✅ Firebase initialized.');
     }
+
+    // Ya puedes usar servicios de Firebase
+    this.db = admin.firestore();
+  }
+
+  async getDocument(path: string) {
+    const snapshot = await this.db.doc(path).get();
+    return snapshot.exists ? snapshot.data() : null;
   }
 }
